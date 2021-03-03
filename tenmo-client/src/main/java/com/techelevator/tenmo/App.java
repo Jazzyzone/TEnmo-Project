@@ -10,7 +10,7 @@ public class App {
 
 private static final String API_BASE_URL = "http://localhost:8080/";
     
-    private static final String MENU_OPTION_EXIT = "Exit";
+    private static final String MENU_OPTION_EXIT = "Exit & Logout";
     private static final String LOGIN_MENU_OPTION_REGISTER = "Register";
 	private static final String LOGIN_MENU_OPTION_LOGIN = "Login";
 	private static final String[] LOGIN_MENU_OPTIONS = { LOGIN_MENU_OPTION_REGISTER, LOGIN_MENU_OPTION_LOGIN, MENU_OPTION_EXIT };
@@ -69,6 +69,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 
 	private void viewCurrentBalance() {
 		// TODO Auto-generated method stub
+		System.out.println("Your current account balance is: " );
 		
 	}
 

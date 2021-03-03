@@ -80,6 +80,19 @@ public class JdbcUserDAO implements UserDAO {
 
         return true;
     }
+    
+    @Override
+	public int getUserCurrentBalanceByID(int userId) {
+		
+    	String sql = "SELECT balance FROM accounts WHERE user_id = ?";
+    	
+        Integer id = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+        if (id != null) {
+            return id;
+        } else {
+            return -1;
+        }
+	}
 
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();
@@ -90,4 +103,5 @@ public class JdbcUserDAO implements UserDAO {
         user.setAuthorities("USER");
         return user;
     }
+
 }
