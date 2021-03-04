@@ -32,7 +32,6 @@ public class AuthenticationController {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private UserDAO userDAO;
-    private TransfersDAO transfersDAO;
 
     public AuthenticationController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, UserDAO userDAO) {
         this.tokenProvider = tokenProvider;
@@ -40,10 +39,6 @@ public class AuthenticationController {
         this.userDAO = userDAO;
     }
 
-    @RequestMapping(path = "/accounts/{id}", method = RequestMethod.GET)
-    public void getBalance(@PathVariable int id) {
-    	transfersDAO.getUserCurrentBalanceByID(id);
-    }
     
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public LoginResponse login(@Valid @RequestBody LoginDTO loginDto) {

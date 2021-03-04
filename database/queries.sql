@@ -172,20 +172,12 @@ SELECT * FROM accounts;
 
 --(5) SELECT ALL 'MY' TRANSFERS - FROM AND TO 'ME'
 SELECT t.transfer_id AS ID, u.username AS From_To, t.amount AS Amount
-FROM transfers AS t
-        INNER JOIN accounts AS a
-                ON a.account_id = t.account_to
-                INNER JOIN users AS u
-                        ON u.user_id = a.user_id
-WHERE u.username NOT LIKE '%jasmine%';
+FROM transfers AS t INNER JOIN accounts AS a ON a.account_id = t.account_to
+INNER JOIN users AS u ON u.user_id = a.user_id WHERE u.username NOT LIKE '%jasmine%';
 
 SELECT t.transfer_id AS ID, u.username AS From_To, t.amount AS Amount
-FROM transfers AS t
-        INNER JOIN accounts AS a
-                ON a.account_id = t.account_from
-                INNER JOIN users AS u
-                        ON u.user_id = a.user_id
-WHERE u.username NOT LIKE '%jasmine%';
+FROM transfers AS t INNER JOIN accounts AS a ON a.account_id = t.account_from
+INNER JOIN users AS u ON u.user_id = a.user_id WHERE u.username NOT LIKE '%jasmine%';
 
 
 --(6) SELECT ANY TRANSFER BY ID

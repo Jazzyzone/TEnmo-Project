@@ -65,12 +65,14 @@ public class Transfers {
 
 	@Override
 	public String toString() {
-		return "Transfers [transferID=" + transferID + ", transferTypeID=" + transferTypeID + ", transferStatusID="
-				+ transferStatusID + ", accountFrom=" + accountFrom + ", accountTo=" + accountTo + ", amount=" + amount
-				+ "]";
+		
+		return "Transfers [transferID=" + transferID
+				+ ", transferTypeID=" + transferTypeID
+				+ ", transferStatusID="+ transferStatusID 
+				+ ", accountFrom=" + accountFrom 
+				+ ", accountTo=" + accountTo 
+				+ ", amount=" + amount+ "]";
 	}
-	
-	
 	
 	
 	

@@ -14,9 +14,9 @@ public interface TransfersDAO {
 	
 	boolean transfer (int fromUser, int toUser, int amountTEBucks);
 	
-	int updateFromUserBalance (int fromUser, int updateAmount);
+	void updateFromUserBalance (int fromUser, int updateAmount);
 	
-	int updateToUserBalance (int toUser, int updateAmount);
+	void updateToUserBalance (int toUser, int updateAmount);
 	
 	List<Transfers> getAllTransfers(int userID);
 	
