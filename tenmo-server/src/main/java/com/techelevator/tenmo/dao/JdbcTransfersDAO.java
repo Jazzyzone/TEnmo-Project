@@ -1,33 +1,40 @@
 package com.techelevator.tenmo.dao;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
+import com.techelevator.tenmo.model.Accounts;
 import com.techelevator.tenmo.model.Transfers;
 import com.techelevator.tenmo.model.User;
 
-
+@Component
 public class JdbcTransfersDAO implements TransfersDAO {
 
 	private JdbcTemplate jdbcTemplate;
+	
+	public JdbcTransfersDAO(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
 
 	@Override
-	public int getUserCurrentBalanceByID(int userId) {
+	public BigDecimal getUserCurrentBalanceByID(int userId) {
 
+		Accounts account = null;
 		String sql = "SELECT balance FROM accounts WHERE user_id = ?";
 
-		Integer balance = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+		BigDecimal result = jdbcTemplate.queryForObject(sql, BigDecimal.class, userId);
 		
-		if (balance != null) {
-			return balance;
-		} else {
-			return -1;
-		}
+		return result;
+		
+		
 	}
 
 	@Override
@@ -45,9 +52,9 @@ public class JdbcTransfersDAO implements TransfersDAO {
 	@Override
 	public boolean transfer(int fromUser, int toUser, int amountTEBucks) {
 
-		if(amountTEBucks > getUserCurrentBalanceByID(fromUser)) {
-			return false;
-		} else {
+//		if(amountTEBucks > getUserCurrentBalanceByID(fromUser)) {
+//			return false;
+//		} else {
 
 			String sql = "INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount)\r\n" + 
 					"VALUES(2, 2, \r\n" + 
@@ -62,7 +69,7 @@ public class JdbcTransfersDAO implements TransfersDAO {
 
 			return true;
 		}
-	}
+	//}
 
 	@Override
 	public void updateFromUserBalance(int fromUser, int updateAmount) {
@@ -154,6 +161,14 @@ public class JdbcTransfersDAO implements TransfersDAO {
 		transfer.setAccountTo(ts.getInt("account_to"));
 		transfer.setAmount(ts.getInt("amount"));
 		return transfer;
+	}
+	
+	private Accounts mapRowToAccounts(SqlRowSet account) {
+		Accounts accountObject = new Accounts(0, 0, 0);
+		accountObject.setAccountId(account.getInt("account_id"));
+		accountObject.setUserId(account.getInt("user_id"));
+		accountObject.setBalance(account.getInt("balance"));
+		return accountObject;
 	}
 
 }
