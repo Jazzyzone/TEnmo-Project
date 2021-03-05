@@ -11,6 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
+import com.techelevator.tenmo.exception.TransferIdNotFoundException;
+import com.techelevator.tenmo.exception.UserIdNotFoundException;
 import com.techelevator.tenmo.model.Accounts;
 import com.techelevator.tenmo.model.Transfers;
 import com.techelevator.tenmo.model.User;
@@ -38,10 +40,13 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	}
 
 	@Override
-	public List<User> getAllExceptUser() {
+	public List<User> getAllUsers() {
 		List<User> users = new ArrayList<>();
 		
-		String sql = "SELECT user_id AS ID, username AS Name FROM users";
+//		WE EXCLUDED THE PASSWORD HASH AS THE USER SHOULD NEVER HAVE ACCESS TO THIS PRIVALIDGED COMPANY INFORMAION!!!!!!!!!!
+//		ALL PASSWORD HASHES APPEAR AS NULL!!!!
+		
+		String sql = "SELECT user_id, username FROM users";
 		
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 		
@@ -53,8 +58,9 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	}
 
 	@Override
-	public boolean transfer(int fromUser, int toUser, int amountTEBucks) {
+	public String transfer(int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException  {
 
+		String responseString = "Transfer unsuccessful.";
 
 			String sql = "INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount)\r\n" + 
 					"VALUES(2, 2, \r\n" + 
@@ -62,53 +68,54 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 					"(SELECT account_id FROM accounts WHERE user_id = (SELECT user_id FROM users WHERE username = ?)),\r\n" + 
 					"?)";
 			try {
-				jdbcTemplate.update(sql, fromUser, toUser, amountTEBucks);
-			} catch (DataAccessException e) {
-				return false;
+				jdbcTemplate.queryForRowSet(sql, fromUser, toUser, amountTEBucks);
+				
+				responseString = "Congratulations! Your transfer was successful!";
+			} 
+			catch (DataAccessException e) {
+				
+				return responseString;
 			}
 
-			return true;
+			return responseString;
 		}
 
 	@Override
-	public void updateFromUserBalance(int fromUser, int updateAmount) {
+	public void updateFromUserBalance(Accounts updatedAccount) {
+		
+		String sql = "UPDATE accounts SET balance = ? WHERE user_id = ?";
+		
+		jdbcTemplate.update(sql, updatedAccount.getBalance(), updatedAccount.getUserId());
+	}
+
+	@Override
+	public void updateToUserBalance(Accounts updatedAccount) {
 		
 		
 		String sql = "UPDATE accounts SET balance = ? WHERE user_id = ?";
 		
-		jdbcTemplate.update(sql, updateAmount, fromUser);
+		jdbcTemplate.update(sql, updatedAccount.getBalance(), updatedAccount.getUserId());
 	}
 
 	@Override
-	public void updateToUserBalance(int toUser, int updateAmount) {
-		
-		
-		String sql = "UPDATE accounts SET balance = ? WHERE user_id = ?";
-		
-		jdbcTemplate.update(sql, updateAmount, toUser);;
-	}
-
-	@Override
-	public List<Transfers> getAllTransfers(int userID) {
+	public List<Transfers> getAllTransfers() {
 		List<Transfers> allTransfers = new ArrayList<>();
 		String sql = "SELECT t.transfer_id AS ID, u.username AS From_To, t.amount AS Amount\r\n" + 
-				"FROM transfers AS t INNER JOIN accounts AS a ON a.account_id = t.account_to\r\n" + 
-				"INNER JOIN users AS u ON u.user_id = a.user_id WHERE u.username NOT ILIKE ?";
-		
-		String sql2 = "SELECT t.transfer_id AS ID, u.username AS From_To, t.amount AS Amount\r\n" + 
-				"FROM transfers AS t INNER JOIN accounts AS a ON a.account_id = t.account_from\r\n" + 
-				"INNER JOIN users AS u ON u.user_id = a.user_id WHERE u.username NOT LIKE ?";
+				     "FROM transfers AS t \r\n" + 
+				     "INNER JOIN accounts AS a ON a.account_id = t.account_to OR \r\n" + 
+				                            "a.account_id = t.account_from \r\n" + 
+				     "INNER JOIN users AS u ON u.user_id = a.user_id"; 
 		
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 		while(results.next()) {
-			Transfers transfers = mapRowToTransfer(results);
-			allTransfers.add(transfers);
+			Transfers transferObject = mapRowToTransfer(results);
+			allTransfers.add(transferObject);
 		}
 		return allTransfers;
 	}
 
 	@Override
-	public Transfers getTransferByID(int transferID) {
+	public Transfers getTransferByID(long transferID) throws TransferIdNotFoundException {
 
 		Transfers transferObject = new Transfers(0, 0, 0, 0, 0, 0);
 		String sql = "SELECT t.transfer_id AS ID, "
@@ -133,11 +140,13 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		                                +"INNER JOIN transfer_statuses AS ts"
 		                                       + "ON ts.transfer_status_id = t.transfer_status_id"
 		+ "WHERE u.username NOT LIKE ?";
-		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferID);
 		
-		jdbcTemplate.update(sql, transferID);
+		if( results.next()) {
+			transferObject = mapRowToTransfer(results);
+		}
 		
-		return null;
+		return transferObject;
 
 
 	}
@@ -146,7 +155,7 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		User user = new User();
 		user.setId(rs.getLong("user_id"));
 		user.setUsername(rs.getString("username"));
-		user.setPassword(rs.getString("password_hash"));
+//		user.setPassword(rs.getString("password_hash"));  -EXCLUDED FOR SECURITY REASONS-
 		user.setActivated(true);
 		user.setAuthorities("USER");
 		return user;
@@ -162,12 +171,15 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		return transfer;
 	}
 	
-	private Accounts mapRowToAccounts(SqlRowSet account) {
-		Accounts accountObject = new Accounts(0, 0, null);
-		accountObject.setAccountId(account.getInt("account_id"));
-		accountObject.setUserId(account.getInt("user_id"));
-		accountObject.setBalance(account.getBigDecimal("balance"));
-		return accountObject;
-	}
+	
+//	DO WE NEED THIS ONE????????????????????
+	
+//	private Accounts mapRowToAccounts(SqlRowSet account) {
+//		Accounts accountObject = new Accounts(0, 0, null);
+//		accountObject.setAccountId(account.getInt("account_id"));
+//		accountObject.setUserId(account.getInt("user_id"));
+//		accountObject.setBalance(account.getBigDecimal("balance"));
+//		return accountObject;
+//	}
 
 }

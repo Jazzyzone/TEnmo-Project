@@ -139,11 +139,24 @@ SELECT user_id AS ID, username AS Name FROM users WHERE username NOT LIKE '%jasm
 SELECT * FROM transfers;
 
 --(4.2 INCLUDES 4.6) MAKE A TRANSFER
+
 INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount)
 VALUES(2, 2, 
 (SELECT account_id FROM accounts WHERE user_id = (SELECT user_id FROM users WHERE username = 'jasmine')), 
 (SELECT account_id FROM accounts WHERE user_id = (SELECT user_id FROM users WHERE username = 'steven')),
 1000); 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount)
@@ -171,13 +184,18 @@ SELECT * FROM accounts;
 --SELECT user_id, balance FROM accounts WHERE user_id = 1002;
 
 --(5) SELECT ALL 'MY' TRANSFERS - FROM AND TO 'ME'
-SELECT t.transfer_id AS ID, u.username AS From_To, t.amount AS Amount
-FROM transfers AS t INNER JOIN accounts AS a ON a.account_id = t.account_to
-INNER JOIN users AS u ON u.user_id = a.user_id WHERE u.username NOT LIKE '%jasmine%';
 
 SELECT t.transfer_id AS ID, u.username AS From_To, t.amount AS Amount
-FROM transfers AS t INNER JOIN accounts AS a ON a.account_id = t.account_from
-INNER JOIN users AS u ON u.user_id = a.user_id WHERE u.username NOT LIKE '%jasmine%';
+FROM transfers AS t 
+INNER JOIN accounts AS a ON a.account_id = t.account_to OR 
+                            a.account_id = t.account_from                   
+INNER JOIN users AS u ON u.user_id = a.user_id; 
+
+--WHERE u.username NOT LIKE '%jasmine%';
+
+--SELECT t.transfer_id AS ID, u.username AS From_To, t.amount AS Amount
+--FROM transfers AS t INNER JOIN accounts AS a ON a.account_id = t.account_from
+--INNER JOIN users AS u ON u.user_id = a.user_id WHERE u.username NOT LIKE '%jasmine%';
 
 
 --(6) SELECT ANY TRANSFER BY ID
