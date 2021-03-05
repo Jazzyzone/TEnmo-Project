@@ -9,24 +9,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.techelevator.tenmo.dao.TransfersDAO;
+import com.techelevator.tenmo.dao.TenmoServicesDAO;
 import com.techelevator.tenmo.dao.UserDAO;
 
 @PreAuthorize("isAuthenticated()")
 @RestController
-public class TransfersController {
+public class TenmoServicesController {
 
 	private UserDAO userDAO;
-	private TransfersDAO transfersDAO;
+	private TenmoServicesDAO tsDAO;
 	
-	public TransfersController(TransfersDAO transfersDAO) {
-		this.transfersDAO = transfersDAO;
+	public TenmoServicesController(TenmoServicesDAO tsDAO) {
+		this.tsDAO = tsDAO;
 	}
 
 	@PreAuthorize("permitAll")
 	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
 	public BigDecimal getBalance(@PathVariable int id) {
-		return transfersDAO.getUserCurrentBalanceByID(id);
+		return tsDAO.getUserCurrentBalanceByID(id);
 	}
 
 }

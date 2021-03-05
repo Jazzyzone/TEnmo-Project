@@ -7,7 +7,7 @@ import com.techelevator.tenmo.model.Accounts;
 import com.techelevator.tenmo.model.Transfers;
 import com.techelevator.tenmo.model.User;
 
-public interface TransfersDAO {
+public interface TenmoServicesDAO {
 
 	
 	BigDecimal getUserCurrentBalanceByID(int userID);

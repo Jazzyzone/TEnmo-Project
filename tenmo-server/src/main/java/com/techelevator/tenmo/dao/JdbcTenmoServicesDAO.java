@@ -16,11 +16,11 @@ import com.techelevator.tenmo.model.Transfers;
 import com.techelevator.tenmo.model.User;
 
 @Component
-public class JdbcTransfersDAO implements TransfersDAO {
+public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 
 	private JdbcTemplate jdbcTemplate;
 	
-	public JdbcTransfersDAO(JdbcTemplate jdbcTemplate) {
+	public JdbcTenmoServicesDAO(JdbcTemplate jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
@@ -40,8 +40,11 @@ public class JdbcTransfersDAO implements TransfersDAO {
 	@Override
 	public List<User> getAllExceptUser() {
 		List<User> users = new ArrayList<>();
-		String sql = "SELECT user_id AS ID, username AS Name FROM users WHERE username NOT ILIKE ?";
+		
+		String sql = "SELECT user_id AS ID, username AS Name FROM users";
+		
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+		
 		while(results.next()) {
 			User user = mapRowToUser(results);
 			users.add(user);
@@ -52,9 +55,6 @@ public class JdbcTransfersDAO implements TransfersDAO {
 	@Override
 	public boolean transfer(int fromUser, int toUser, int amountTEBucks) {
 
-//		if(amountTEBucks > getUserCurrentBalanceByID(fromUser)) {
-//			return false;
-//		} else {
 
 			String sql = "INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount)\r\n" + 
 					"VALUES(2, 2, \r\n" + 
@@ -69,7 +69,6 @@ public class JdbcTransfersDAO implements TransfersDAO {
 
 			return true;
 		}
-	//}
 
 	@Override
 	public void updateFromUserBalance(int fromUser, int updateAmount) {

@@ -1,11 +1,12 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.models.AuthenticatedUser;
+import com.techelevator.tenmo.models.User;
 import com.techelevator.tenmo.models.UserCredentials;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.AuthenticationServiceException;
+import com.techelevator.tenmo.services.TenmoService;
 import com.techelevator.view.ConsoleService;
-import com.techelevator.view.TransfersService;
 
 public class App {
 
@@ -26,17 +27,20 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticatedUser currentUser;
     private ConsoleService console;
     private AuthenticationService authenticationService;
-    private TransfersService transferService;
+    private TenmoService currentTenmoService;
 
     public static void main(String[] args) {
-    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL));
+    	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), 
+    			new TenmoService(API_BASE_URL));
     	app.run();
     }
 
-    public App(ConsoleService console, AuthenticationService authenticationService) {
+    public App(ConsoleService console, AuthenticationService authenticationService, TenmoService currentTenmoService) {
 		this.console = console;
 		this.authenticationService = authenticationService;
+		this.currentTenmoService = currentTenmoService;
 	}
+    
 
 	public void run() {
 		System.out.println("*********************");
@@ -51,6 +55,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		while(true) {
 			String choice = (String)console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 			if(MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {
+				
 				viewCurrentBalance();
 			} else if(MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS.equals(choice)) {
 				viewTransferHistory();
@@ -69,9 +74,16 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		}
 	}
 
-	private void viewCurrentBalance(int userId) {
-		// TODO Auto-generated method stub
-		System.out.println("Your current account balance is: " + TransfersService.viewCurrentBalance();  );
+	private void viewCurrentBalance() {
+		// TODO work on accountService method. Currently null
+		try {
+			int userId = currentUser.getUser().getId();
+			System.out.println("Your current account balance is: $" 
+			+ String.format("%.2f", currentTenmoService.viewCurrentBalance(userId).doubleValue()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 
