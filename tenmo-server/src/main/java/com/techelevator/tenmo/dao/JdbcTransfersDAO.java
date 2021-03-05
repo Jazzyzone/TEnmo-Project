@@ -164,10 +164,10 @@ public class JdbcTransfersDAO implements TransfersDAO {
 	}
 	
 	private Accounts mapRowToAccounts(SqlRowSet account) {
-		Accounts accountObject = new Accounts(0, 0, 0);
+		Accounts accountObject = new Accounts(0, 0, null);
 		accountObject.setAccountId(account.getInt("account_id"));
 		accountObject.setUserId(account.getInt("user_id"));
-		accountObject.setBalance(account.getInt("balance"));
+		accountObject.setBalance(account.getBigDecimal("balance"));
 		return accountObject;
 	}
 

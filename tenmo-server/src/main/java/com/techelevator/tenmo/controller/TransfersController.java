@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.techelevator.tenmo.dao.TransfersDAO;
 import com.techelevator.tenmo.dao.UserDAO;
 
-//@PreAuthorize("isAuthenticated()")
+@PreAuthorize("isAuthenticated()")
 @RestController
 public class TransfersController {
 
@@ -23,6 +23,7 @@ public class TransfersController {
 		this.transfersDAO = transfersDAO;
 	}
 
+	@PreAuthorize("permitAll")
 	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
 	public BigDecimal getBalance(@PathVariable int id) {
 		return transfersDAO.getUserCurrentBalanceByID(id);

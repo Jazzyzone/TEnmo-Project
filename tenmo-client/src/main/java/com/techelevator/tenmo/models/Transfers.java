@@ -1,34 +1,23 @@
-package com.techelevator.tenmo.model;
-
-import javax.validation.constraints.NotBlank;
+package com.techelevator.tenmo.models;
 
 public class Transfers {
 
 	private int transferID;
-	
-	@NotBlank(message = "This field can must have a value.")
 	private int transferTypeID;
-	
-	@NotBlank(message = "This field can must have a value.")
 	private int transferStatusID;
-	
-	@NotBlank(message = "This field can must have a value.")
 	private int accountFrom;
-	
-	@NotBlank(message = "This field can must have a value.")
 	private int accountTo;
-	
-	@NotBlank(message = "This field can must have a value.")
 	private int amount;
-	
-	public Transfers(int transferID, int transferTypeID, int transferStatusID, int accountFrom, int accountTo, int amount) {
-		
+
+	public Transfers(int transferID, int transferTypeID, int transferStatusID, int accountFrom, int accountTo,
+			int amount) {
+
 		this.transferID = transferID;
 		this.transferTypeID = transferTypeID;
 		this.transferStatusID = transferStatusID;
 		this.accountFrom = accountFrom;
 		this.accountTo = accountTo;
-		this.amount = amount;	
+		this.amount = amount;
 	}
 
 	public int getTransferTypeID() {
@@ -77,15 +66,10 @@ public class Transfers {
 
 	@Override
 	public String toString() {
-		
-		return "Transfers [transferID=" + transferID
-				+ ", transferTypeID=" + transferTypeID
-				+ ", transferStatusID="+ transferStatusID 
-				+ ", accountFrom=" + accountFrom 
-				+ ", accountTo=" + accountTo 
-				+ ", amount=" + amount+ "]";
+
+		return "Transfers [transferID=" + transferID + ", transferTypeID=" + transferTypeID + ", transferStatusID="
+				+ transferStatusID + ", accountFrom=" + accountFrom + ", accountTo=" + accountTo + ", amount=" + amount
+				+ "]";
 	}
-	
-	
-	
 }
+
