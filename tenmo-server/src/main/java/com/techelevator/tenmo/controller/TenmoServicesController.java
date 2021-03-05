@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.techelevator.tenmo.dao.TenmoServicesDAO;
 import com.techelevator.tenmo.dao.UserDAO;
 import com.techelevator.tenmo.exception.UserIdNotFoundException;
+import com.techelevator.tenmo.model.Transfers;
 import com.techelevator.tenmo.model.User;
 
-@PreAuthorize("isAuthenticated()")
+//@PreAuthorize("isAuthenticated()")
 @RestController
 public class TenmoServicesController {
 
@@ -42,11 +43,11 @@ public class TenmoServicesController {
 	}
 	
 	
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
-	public String createTransfer(@RequestBody int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException {
-		return tsDAO.transfer(fromUser, toUser, amountTEBucks);
+	public String createTransfer(@RequestBody Transfers newTransfer) throws UserIdNotFoundException {
+		return tsDAO.transfer(newTransfer.getAccountFrom(), newTransfer.getAccountTo(), newTransfer.getAmount());
 	}
 	
 	

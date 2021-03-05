@@ -1,5 +1,7 @@
 package com.techelevator.tenmo.model;
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.NotBlank;
 
 public class Transfers {
@@ -19,9 +21,9 @@ public class Transfers {
 	private int accountTo;
 	
 	@NotBlank(message = "This field can must have a value.")
-	private int amount;
+	private BigDecimal amount;
 	
-	public Transfers(int transferID, int transferTypeID, int transferStatusID, int accountFrom, int accountTo, int amount) {
+	public Transfers(int transferID, int transferTypeID, int transferStatusID, int accountFrom, int accountTo, BigDecimal amount) {
 		
 		this.transferID = transferID;
 		this.transferTypeID = transferTypeID;
@@ -29,6 +31,10 @@ public class Transfers {
 		this.accountFrom = accountFrom;
 		this.accountTo = accountTo;
 		this.amount = amount;	
+	}
+
+	public Transfers() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public int getTransferTypeID() {
@@ -63,11 +69,11 @@ public class Transfers {
 		this.accountTo = accountTo;
 	}
 
-	public int getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(int amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

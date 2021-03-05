@@ -62,13 +62,14 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 
 		String responseString = "Transfer unsuccessful.";
 
-			String sql = "INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount)\r\n" + 
-					"VALUES(2, 2, \r\n" + 
-					"(SELECT account_id FROM accounts WHERE user_id = (SELECT user_id FROM users WHERE username = ?)), \r\n" + 
-					"(SELECT account_id FROM accounts WHERE user_id = (SELECT user_id FROM users WHERE username = ?)),\r\n" + 
-					"?)";
+			String sql = "INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount) \r\n" + 
+					"VALUES(2, 2, ?, ?, ?)";  
+					//+"(SELECT account_id FROM accounts WHERE user_id = (SELECT user_id FROM users WHERE username = ?)), \r\n" + 
+					//"(SELECT account_id FROM accounts WHERE user_id = (SELECT user_id FROM users WHERE username = ?)),\r\n" + 
+					//"?)";
+			
 			try {
-				jdbcTemplate.queryForRowSet(sql, fromUser, toUser, amountTEBucks);
+				jdbcTemplate.update(sql, fromUser, toUser, amountTEBucks);
 				
 				responseString = "Congratulations! Your transfer was successful!";
 			} 
@@ -117,7 +118,7 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	@Override
 	public Transfers getTransferByID(long transferID) throws TransferIdNotFoundException {
 
-		Transfers transferObject = new Transfers(0, 0, 0, 0, 0, 0);
+		Transfers transferObject = new Transfers(0, 0, 0, 0, 0, null);
 		String sql = "SELECT t.transfer_id AS ID, "
 				
 				+ "(SELECT username FROM users WHERE user_id = "
@@ -162,12 +163,12 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	}
 
 	private Transfers mapRowToTransfer(SqlRowSet ts) {
-		Transfers transfer = new Transfers(0, 0, 0, 0, 0, 0);
+		Transfers transfer = new Transfers();
 		transfer.setTransferTypeID(ts.getInt("transfer_type_id"));
 		transfer.setTransferStatusID(ts.getInt("transfer_status_id"));
 		transfer.setAccountFrom(ts.getInt("account_from"));
 		transfer.setAccountTo(ts.getInt("account_to"));
-		transfer.setAmount(ts.getInt("amount"));
+		transfer.setAmount(ts.getBigDecimal("amount"));
 		return transfer;
 	}
 	
