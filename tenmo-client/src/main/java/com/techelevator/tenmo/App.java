@@ -54,8 +54,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	private void mainMenu() {
 		while(true) {
 			String choice = (String)console.getChoiceFromOptions(MAIN_MENU_OPTIONS);
-			if(MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {
-				
+			if(MAIN_MENU_OPTION_VIEW_BALANCE.equals(choice)) {			
 				viewCurrentBalance();
 			} else if(MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS.equals(choice)) {
 				viewTransferHistory();
@@ -99,7 +98,18 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
-		
+		try {
+			System.out.println("-------------------------------------------" );
+			System.out.println("Users");
+			System.out.println("ID         \t Name");
+			System.out.println("-------------------------------------------" );
+			System.out.println(currentTenmoService.listUsers());
+			System.out.println("Enter ID of user you are sending to (0 to cancel): " );
+			System.out.println("Enter amount: " );
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void requestBucks() {

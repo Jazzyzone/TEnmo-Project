@@ -23,18 +23,25 @@ public class Transfers {
 	@NotBlank(message = "This field can must have a value.")
 	private BigDecimal amount;
 	
-	public Transfers(int transferID, int transferTypeID, int transferStatusID, int accountFrom, int accountTo, BigDecimal amount) {
+	//private String toUsername;
+	//private String fromUsername;
+	
+	public Transfers(int transferID, int transferTypeID, int transferStatusID, int accountFrom, int accountTo, BigDecimal amount)
+			//,String toUsername, String fromUsername) 
+			{
 		
 		this.transferID = transferID;
 		this.transferTypeID = transferTypeID;
 		this.transferStatusID = transferStatusID;
 		this.accountFrom = accountFrom;
 		this.accountTo = accountTo;
-		this.amount = amount;	
+		this.amount = amount;
+		//this.toUsername = toUsername;
+		//this.fromUsername = fromUsername;
 	}
 
 	public Transfers() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getTransferTypeID() {
@@ -80,6 +87,10 @@ public class Transfers {
 	public int getTransferID() {
 		return transferID;
 	}
+	
+	public void setTransferID(int transferID) {
+		this.transferID = transferID;
+	}
 
 	@Override
 	public String toString() {
@@ -91,6 +102,22 @@ public class Transfers {
 				+ ", accountTo=" + accountTo 
 				+ ", amount=" + amount+ "]";
 	}
+
+//	public String getToUsername() {
+//		return toUsername;
+//	}
+//
+//	public void setToUsername(String toUsername) {
+//		this.toUsername = toUsername;
+//	}
+//
+//	public String getFromUsername() {
+//		return fromUsername;
+//	}
+//
+//	public void setFromUsername(String fromUsername) {
+//		this.fromUsername = fromUsername;
+//	}
 	
 	
 	

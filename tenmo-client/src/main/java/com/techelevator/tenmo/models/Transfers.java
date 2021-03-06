@@ -63,6 +63,10 @@ public class Transfers {
 	public int getTransferID() {
 		return transferID;
 	}
+	
+	public void setTransferID(int transferID) {
+		this.transferID = transferID;
+	}
 
 	@Override
 	public String toString() {

@@ -98,15 +98,19 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		jdbcTemplate.update(sql, updatedAccount.getBalance(), updatedAccount.getUserId());
 	}
 
+	//Make a method for a username by ID
+	
 	@Override
 	public List<Transfers> getAllTransfers() {
 		List<Transfers> allTransfers = new ArrayList<>();
-		String sql = "SELECT t.transfer_id AS ID, u.username AS From_To, t.amount AS Amount\r\n" + 
-				     "FROM transfers AS t \r\n" + 
-				     "INNER JOIN accounts AS a ON a.account_id = t.account_to OR \r\n" + 
-				                            "a.account_id = t.account_from \r\n" + 
-				     "INNER JOIN users AS u ON u.user_id = a.user_id"; 
-		
+		String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount FROM transfers";
+				
+//				"SELECT t.transfer_id, u.username, t.amount AS Amount\r\n" + 
+//				     "FROM transfers AS t \r\n" + 
+//				     "INNER JOIN accounts AS a ON a.account_id = t.account_to OR \r\n" + 
+//				                            "a.account_id = t.account_from \r\n" + 
+//				     "INNER JOIN users AS u ON u.user_id = a.user_id"; 
+//		
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 		while(results.next()) {
 			Transfers transferObject = mapRowToTransfer(results);
@@ -118,16 +122,16 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	@Override
 	public Transfers getTransferByID(long transferID) throws TransferIdNotFoundException {
 
-		Transfers transferObject = new Transfers(0, 0, 0, 0, 0, null);
+		Transfers transferObject = new Transfers();
 		String sql = "SELECT t.transfer_id AS ID, "
 				
 				+ "(SELECT username FROM users WHERE user_id = "
 					+ "(SELECT user_id FROM accounts WHERE account_id = "
-						+ "(SELECT account_from FROM transfers WHERE transfer_id = 3001))) AS From," 
+						+ "(SELECT account_from FROM transfers WHERE transfer_id = ?))) AS From," 
 		        
 		        + "(SELECT username FROM users WHERE user_id = "
 		        	+ "(SELECT user_id FROM accounts WHERE account_id = "
-		        		+ "(SELECT account_to FROM transfers WHERE transfer_id = 3001))) AS To,"
+		        		+ "(SELECT account_to FROM transfers WHERE transfer_id = ?))) AS To,"
 		        
 		        + "tt.transfer_type_desc AS Type, ts.transfer_status_desc AS Status, t.amount AS Amount"
 
@@ -164,6 +168,7 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 
 	private Transfers mapRowToTransfer(SqlRowSet ts) {
 		Transfers transfer = new Transfers();
+		transfer.setTransferID(ts.getInt("transfer_id"));
 		transfer.setTransferTypeID(ts.getInt("transfer_type_id"));
 		transfer.setTransferStatusID(ts.getInt("transfer_status_id"));
 		transfer.setAccountFrom(ts.getInt("account_from"));

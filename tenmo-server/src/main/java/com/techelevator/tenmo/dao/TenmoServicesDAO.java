@@ -22,6 +22,8 @@ public interface TenmoServicesDAO {
 	
 	void updateToUserBalance (Accounts updatedAccount);
 	
+	
+	
 	List<Transfers> getAllTransfers();
 	
 	Transfers getTransferByID (long transferID) throws TransferIdNotFoundException; 
