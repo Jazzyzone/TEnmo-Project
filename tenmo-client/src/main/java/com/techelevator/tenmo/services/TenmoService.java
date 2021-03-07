@@ -90,7 +90,7 @@ public class TenmoService {
 		    return "Congratulations, your transfer was successful";
 		}
 		
-		return "Sorry, insuffient funds";
+		return "Sorry, insufficient funds";
 	}
 	
 	
@@ -145,7 +145,7 @@ public void toUserAccountUpdate(int userId, BigDecimal amountTEBucks) throws Ten
 	private HttpEntity<Transfers> makeTransferEntity(Transfers transfer) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(AUTH_TOKEN);
+        headers.setBearerAuth(App.AUTH_TOKEN);
         HttpEntity<Transfers> entity = new HttpEntity<>(transfer, headers);
         return entity;
     }
@@ -153,7 +153,7 @@ public void toUserAccountUpdate(int userId, BigDecimal amountTEBucks) throws Ten
 	private HttpEntity<Accounts> makeAccountEntity(Accounts account) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(AUTH_TOKEN);
+        headers.setBearerAuth(App.AUTH_TOKEN);
         HttpEntity<Accounts> entity = new HttpEntity<>(account, headers);
         return entity;
     }
