@@ -1,5 +1,7 @@
 package com.techelevator.tenmo;
 
+import java.math.BigDecimal;
+
 import com.techelevator.tenmo.models.AuthenticatedUser;
 import com.techelevator.tenmo.models.User;
 import com.techelevator.tenmo.models.UserCredentials;
@@ -24,9 +26,10 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	private static final String MAIN_MENU_OPTION_LOGIN = "Login as different user";
 	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_VIEW_BALANCE, MAIN_MENU_OPTION_SEND_BUCKS, MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS, MAIN_MENU_OPTION_REQUEST_BUCKS, MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS, MAIN_MENU_OPTION_LOGIN, MENU_OPTION_EXIT };
 	
-	public static String USER_NAME;
-	public static String AUTH_TOKEN;
-	public static int USER_ID; 
+	public static String USER_NAME = "";
+	public static String AUTH_TOKEN = "";
+	public static int USER_ID = 0; 
+	public static int TO_USER_ID = 0;
 	
     private AuthenticatedUser currentUser;
     private ConsoleService console;
@@ -96,8 +99,12 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		System.out.println("Transfers");
 		System.out.println("ID         \t From/To		Amount");
 		System.out.println("-------------------------------------------" );
+		int userInputId = 0;
+		userInputId = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel) " );
 		
-		System.out.println("Please enter transfer ID to view details (0 to cancel): " );
+		System.out.println("-------------------------------------------" );
+		System.out.println("Transfer Details");
+		System.out.println("-------------------------------------------" );
 	}
 
 	private void viewPendingRequests() {
@@ -105,7 +112,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		
 	}
 
-	private void sendBucks() {
+	public String sendBucks() {
 		// TODO Auto-generated method stub
 		try {
 			System.out.println("-------------------------------------------" );
@@ -116,14 +123,21 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 				
 			int userInputId = 0;
 			userInputId = console.getUserInputInteger("\nEnter ID of user you are sending to (0 to cancel) " );
+			App.TO_USER_ID = userInputId;
 			
-			int userInputAmount = 0;
-			userInputAmount = console.getUserInputInteger("Enter amount " );
+			BigDecimal userInputAmount = null;
+			userInputAmount = console.getUserInputBigDecimal("Enter amount " );
+			
+			currentTenmoService.makeATransfer(currentUser.getUser().getId(),  userInputId,  userInputAmount);
+			currentTenmoService.currentUserAccountUpdate(currentUser.getUser().getId(), userInputAmount);
+			currentTenmoService.toUserAccountUpdate(userInputId, userInputAmount);
+			
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return "**Your transfer has been completed.**";
 	}
 
 	private void requestBucks() {

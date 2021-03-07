@@ -23,7 +23,7 @@ import com.techelevator.tenmo.model.Accounts;
 import com.techelevator.tenmo.model.Transfers;
 import com.techelevator.tenmo.model.User;
 
-//@PreAuthorize("isAuthenticated()")
+@PreAuthorize("isAuthenticated()")
 @RestController
 public class TenmoServicesController {
 
@@ -46,20 +46,6 @@ public class TenmoServicesController {
 	public List<User> getAll() {
 		return tsDAO.getAllUsers();
 	}
-
-	@PreAuthorize("permitAll")
-	@RequestMapping(path = "/accounts/{userId}/increase/balance", method = RequestMethod.PUT)
-	public void toUserUpdate(@RequestBody Accounts newAccountUpdate, @PathVariable int userId) 
-			throws UserIdNotFoundException {
-		
-		tsDAO.UpdateToUserBalance(userId, newAccountUpdate.getBalance());
-	}
-	
-	@PreAuthorize("permitAll")
-	@RequestMapping(path = "/accounts/{userId}/decrease/balance", method = RequestMethod.PUT)
-	public void fromUserUpdate(@RequestBody Accounts newAccountUpdate, @PathVariable int userId) throws UserIdNotFoundException {
-		tsDAO.UpdateFromUserBalance(userId, newAccountUpdate.getBalance());
-	}
 	
 	@PreAuthorize("permitAll")
 	@ResponseStatus(HttpStatus.CREATED)
@@ -67,6 +53,21 @@ public class TenmoServicesController {
 	public String createTransfer(@RequestBody Transfers newTransfer) throws UserIdNotFoundException {
 		return tsDAO.transfer(newTransfer.getAccountFrom(), newTransfer.getAccountTo(), newTransfer.getAmount());
 	}
+	
+	@PreAuthorize("permitAll")
+	@RequestMapping(path = "/accounts/{userId}/decreased/balance", method = RequestMethod.PUT)
+	public void fromUserUpdate(@RequestBody Accounts newAccountUpdate, @PathVariable int userId) throws UserIdNotFoundException {
+		tsDAO.UpdateFromUserBalance(userId, newAccountUpdate.getBalance());
+	}
+
+	@PreAuthorize("permitAll")
+	@RequestMapping(path = "/accounts/{userId}/increased/balance", method = RequestMethod.PUT)
+	public void toUserUpdate(@RequestBody Accounts newAccountUpdate, @PathVariable int userId) 
+			throws UserIdNotFoundException {
+		
+		tsDAO.UpdateToUserBalance(userId, newAccountUpdate.getBalance());
+	}
+	
 
 	@PreAuthorize("permitAll")
 	@RequestMapping(path = "/transfers", method = RequestMethod.GET)
