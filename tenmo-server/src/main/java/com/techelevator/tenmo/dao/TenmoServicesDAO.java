@@ -18,13 +18,12 @@ public interface TenmoServicesDAO {
 	
 	String transfer (int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException;
 	
-	void updateFromUserBalance (Accounts updatedAccount);
-	
-	void updateToUserBalance (Accounts updatedAccount);
-	
-	
 	
 	List<Transfers> getAllTransfers();
 	
-	Transfers getTransferByID (long transferID) throws TransferIdNotFoundException; 
+	Transfers getTransferByID (long transferID) throws TransferIdNotFoundException;
+
+	String UpdateFromUserBalance(int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException;
+
+	void UpdateToUserBalance(int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException; 
 }

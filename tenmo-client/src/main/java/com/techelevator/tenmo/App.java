@@ -88,7 +88,12 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
+		System.out.println("-------------------------------------------" );
+		System.out.println("Transfers");
+		System.out.println("ID         \t From/To		Amount");
+		System.out.println("-------------------------------------------" );
 		
+		System.out.println("Please enter transfer ID to view details (0 to cancel): " );
 	}
 
 	private void viewPendingRequests() {
@@ -103,9 +108,14 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 			System.out.println("Users");
 			System.out.println("ID         \t Name");
 			System.out.println("-------------------------------------------" );
-			System.out.println(currentTenmoService.listUsers());
-			System.out.println("Enter ID of user you are sending to (0 to cancel): " );
-			System.out.println("Enter amount: " );
+			currentTenmoService.listUsers();
+				
+			int userInputId = 0;
+			userInputId = console.getUserInputInteger("\nEnter ID of user you are sending to (0 to cancel) " );
+			
+			int userInputAmount = 0;
+			userInputAmount = console.getUserInputInteger("Enter amount " );
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -164,6 +174,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 			UserCredentials credentials = collectUserCredentials();
 		    try {
 				currentUser = authenticationService.login(credentials);
+				//final AuthenticatedUser userCredentials = currentUser;
 			} catch (AuthenticationServiceException e) {
 				System.out.println("LOGIN ERROR: "+e.getMessage());
 				System.out.println("Please attempt to login again.");
