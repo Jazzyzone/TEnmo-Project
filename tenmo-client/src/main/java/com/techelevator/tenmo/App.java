@@ -24,6 +24,10 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 	private static final String MAIN_MENU_OPTION_LOGIN = "Login as different user";
 	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_VIEW_BALANCE, MAIN_MENU_OPTION_SEND_BUCKS, MAIN_MENU_OPTION_VIEW_PAST_TRANSFERS, MAIN_MENU_OPTION_REQUEST_BUCKS, MAIN_MENU_OPTION_VIEW_PENDING_REQUESTS, MAIN_MENU_OPTION_LOGIN, MENU_OPTION_EXIT };
 	
+	public static String USER_NAME;
+	public static String AUTH_TOKEN;
+	public static int USER_ID; 
+	
     private AuthenticatedUser currentUser;
     private ConsoleService console;
     private AuthenticationService authenticationService;
@@ -174,10 +178,16 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 			UserCredentials credentials = collectUserCredentials();
 		    try {
 				currentUser = authenticationService.login(credentials);
+				
+				App.AUTH_TOKEN = currentUser.getToken();
+				App.USER_NAME = currentUser.getUser().getUsername();
+				App.USER_ID = currentUser.getUser().getId();
+				
+				
 				//final AuthenticatedUser userCredentials = currentUser;
 			} catch (AuthenticationServiceException e) {
 				System.out.println("LOGIN ERROR: "+e.getMessage());
-				System.out.println("Please attempt to login again.");
+				System.out.println("Please attempt to login again."); 
 			}
 		}
 	}

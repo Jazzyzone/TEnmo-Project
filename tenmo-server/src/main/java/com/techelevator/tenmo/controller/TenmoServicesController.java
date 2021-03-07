@@ -36,9 +36,9 @@ public class TenmoServicesController {
 	}
 
 	@PreAuthorize("permitAll")
-	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.GET)
-	public BigDecimal getBalance(@PathVariable int id) {
-		return tsDAO.getUserCurrentBalanceByID(id);
+	@RequestMapping(path = "/accounts/{userId}/balance", method = RequestMethod.GET)
+	public BigDecimal getBalance(@PathVariable int userId) {
+		return tsDAO.getUserCurrentBalanceByID(userId);
 	}
 
 	@PreAuthorize("permitAll")
@@ -48,22 +48,24 @@ public class TenmoServicesController {
 	}
 
 	@PreAuthorize("permitAll")
+	@RequestMapping(path = "/accounts/{userId}/increase/balance", method = RequestMethod.PUT)
+	public void toUserUpdate(@RequestBody Accounts newAccountUpdate, @PathVariable int userId) 
+			throws UserIdNotFoundException {
+		
+		tsDAO.UpdateToUserBalance(userId, newAccountUpdate.getBalance());
+	}
+	
+	@PreAuthorize("permitAll")
+	@RequestMapping(path = "/accounts/{userId}/decrease/balance", method = RequestMethod.PUT)
+	public void fromUserUpdate(@RequestBody Accounts newAccountUpdate, @PathVariable int userId) throws UserIdNotFoundException {
+		tsDAO.UpdateFromUserBalance(userId, newAccountUpdate.getBalance());
+	}
+	
+	@PreAuthorize("permitAll")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
 	public String createTransfer(@RequestBody Transfers newTransfer) throws UserIdNotFoundException {
 		return tsDAO.transfer(newTransfer.getAccountFrom(), newTransfer.getAccountTo(), newTransfer.getAmount());
-	}
-
-	@PreAuthorize("permitAll")
-	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.PUT)
-	public void fromUserUpdate(@RequestBody ) {
-		return tsDAO.UpdateBalance(fromUser, amountTEBucks);
-	}
-	
-	@PreAuthorize("permitAll")
-	@RequestMapping(path = "/accounts/{id}/balance", method = RequestMethod.PUT)
-	public void toUserUpdate(@RequestBody ) {
-		return tsDAO.UpdateBalance(toUser, amountTEBucks);
 	}
 
 	@PreAuthorize("permitAll")
@@ -73,9 +75,9 @@ public class TenmoServicesController {
 	}
 
 	@PreAuthorize("permitAll")
-	@RequestMapping(path = "/transfers/{id}", method = RequestMethod.GET)
-	public Transfers getTransfers(@PathVariable int id) throws TransferIdNotFoundException {
-		return tsDAO.getTransferByID(id);
+	@RequestMapping(path = "/transfers/{transferId}", method = RequestMethod.GET)
+	public Transfers getTransfers(@PathVariable int transferId) throws TransferIdNotFoundException {
+		return tsDAO.getTransferByID(transferId);
 	}
 
 }

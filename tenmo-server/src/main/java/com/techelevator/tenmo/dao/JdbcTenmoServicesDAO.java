@@ -29,7 +29,6 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	@Override
 	public BigDecimal getUserCurrentBalanceByID(int userId) {
 
-		Accounts account = null;
 		String sql = "SELECT balance FROM accounts WHERE user_id = ?";
 
 		BigDecimal result = jdbcTemplate.queryForObject(sql, BigDecimal.class, userId);
@@ -61,66 +60,58 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 
 		// updating to user
 	
-		BigDecimal toResult = getUserCurrentBalanceByID(toUser);
-		BigDecimal toUpdatedBalance = toResult.add(amountTEBucks);
+//		BigDecimal toResult = getUserCurrentBalanceByID(toUser);
+//		BigDecimal toUpdatedBalance = toResult.add(amountTEBucks);
 
 		String sqlToUser = "UPDATE accounts SET balance = ? WHERE user_id = ?";
 
-		jdbcTemplate.update(sqlToUser, toUpdatedBalance, toUser);
+		jdbcTemplate.update(sqlToUser, amountTEBucks, toUser);
 
 	}
 
 	@Override
-	public String UpdateFromUserBalance(int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException {
-
+	public void UpdateFromUserBalance(int fromUser, BigDecimal amountTEBucks) throws UserIdNotFoundException {
 		
-		String responseString = "";
-
-		try {		
-			BigDecimal fromResult = getUserCurrentBalanceByID(fromUser);
-			BigDecimal fromUpdatedBalance = fromResult.subtract(amountTEBucks);
-
-			BigDecimal zeroBalance = new BigDecimal(0);
-			
-			//checking for 0 or more dollar balance after transfer
-			if (fromUpdatedBalance.compareTo(zeroBalance) >= 0) {
+//			BigDecimal fromResult = getUserCurrentBalanceByID(fromUser);
+//			BigDecimal fromUpdatedBalance = fromResult.subtract(amountTEBucks);
+//
+//			BigDecimal zeroBalance = new BigDecimal(0);
+//			
+//			//checking for 0 or more dollar balance after transfer
+//			if (fromUpdatedBalance.compareTo(zeroBalance) >= 0) {
 
 				//updating the from user
-				String sqlFromUser = "UPDATE accounts SET balance = ? WHERE user_id = ?";
-				jdbcTemplate.update(sqlFromUser, fromUpdatedBalance, fromUser);
+		String sqlFromUser = "UPDATE accounts SET balance = ? WHERE user_id = ?";
+		jdbcTemplate.update(sqlFromUser, amountTEBucks, fromUser);
 				
 				//updating the to user balance and calling the method
-				 UpdateToUserBalance(toUser, amountTEBucks);
+//				 UpdateToUserBalance(toUser, amountTEBucks);
 				
-			} else {
-				System.out.println("Insufficent funds");
-			}
+		 
+		
+//			else {
+//				System.out.println("Insufficent funds");
+//			}
 
-		} catch (DataAccessException e) {
+		} 
 
-			return responseString;
-		}
-
-		return responseString;
 		//getUserCurrentBalanceByID(fromUser);
 		// updating from user
 		//String sqlSubtract = "SELECT balance FROM accounts WHERE user_id = ?";
 		//BigDecimal fromResult = jdbcTemplate.queryForObject(sqlSubtract, BigDecimal.class, fromUser);
 		//String sqlAdd = "SELECT balance FROM accounts WHERE user_id = ?";
 		//BigDecimal toResult = jdbcTemplate.queryForObject(sqlAdd, BigDecimal.class, toUser);
-	}
+
 	
 	
 
 	public String transfer(int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException{
 		
-		String responseString = "Transfer unsuccessful.";
-	
-		String sql = "INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount) \r\n" + 
-				"VALUES(2, 2, ?, ?, ?)";  
-				
+		String responseString = "Transfer unsuccessful.";	
 		
 		try {
+			String sql = "INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount) \r\n" + 
+					"VALUES(2, 2, ?, ?, ?)";
 			jdbcTemplate.update(sql, fromUser, toUser, amountTEBucks);
 			
 			responseString = "Congratulations! Your transfer was successful!";
@@ -139,17 +130,19 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	public List<Transfers> getAllTransfers() {
 		List<Transfers> allTransfers = new ArrayList<>();
 		String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount FROM transfers";
-
-		//				"SELECT t.transfer_id, u.username, t.amount AS Amount\r\n" + 
-		//				     "FROM transfers AS t \r\n" + 
-		//				     "INNER JOIN accounts AS a ON a.account_id = t.account_to OR \r\n" + 
-		//				                            "a.account_id = t.account_from \r\n" + 
-		//				     "INNER JOIN users AS u ON u.user_id = a.user_id"; 
-		//		
+	
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 		while (results.next()) {
 			Transfers transferObject = mapRowToTransfer(results);
 			allTransfers.add(transferObject);
+
+			//				"SELECT t.transfer_id, u.username, t.amount AS Amount\r\n" + 
+			//				     "FROM transfers AS t \r\n" + 
+			//				     "INNER JOIN accounts AS a ON a.account_id = t.account_to OR \r\n" + 
+			//				                            "a.account_id = t.account_from \r\n" + 
+			//				     "INNER JOIN users AS u ON u.user_id = a.user_id"; 
+			//	
+			
 		}
 		return allTransfers;
 	}
