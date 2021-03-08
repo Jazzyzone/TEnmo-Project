@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import com.techelevator.tenmo.exception.TransferIdNotFoundException;
 import com.techelevator.tenmo.exception.UserIdNotFoundException;
 import com.techelevator.tenmo.model.Accounts;
-import com.techelevator.tenmo.model.Transfers;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 
 @Component
@@ -105,7 +105,7 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	
 	
 
-	public String transfer(int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException{
+	public void transfer(int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException{
 		
 		String responseString = "Transfer unsuccessful.";	
 		
@@ -118,22 +118,22 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		} 
 		catch (DataAccessException e) {
 			
-			return responseString;
+//			return responseString;
 		}
-		return responseString;
+//		return responseString;
 	}
 
 
 	// Make a method for a username by ID
 
 	@Override
-	public List<Transfers> getAllTransfers() {
-		List<Transfers> allTransfers = new ArrayList<>();
+	public List<Transfer> getAllTransfers() {
+		List<Transfer> allTransfers = new ArrayList<>();
 		String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount FROM transfers";
 	
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
 		while (results.next()) {
-			Transfers transferObject = mapRowToTransfer(results);
+			Transfer transferObject = mapRowToTransfer(results);
 			allTransfers.add(transferObject);
 
 			//				"SELECT t.transfer_id, u.username, t.amount AS Amount\r\n" + 
@@ -148,9 +148,9 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	}
 
 	@Override
-	public Transfers getTransferByID(long transferID) throws TransferIdNotFoundException {
+	public Transfer getTransferByID(long transferID) throws TransferIdNotFoundException {
 
-		Transfers transferObject = new Transfers();
+		Transfer transferObject = new Transfer();
 		String sql = "SELECT * FROM transfers WHERE transfer_id = ? ";
 
 		//				+ "(SELECT username FROM users WHERE user_id = "
@@ -193,15 +193,26 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		return user;
 	}
 
-	private Transfers mapRowToTransfer(SqlRowSet ts) {
-		Transfers transfer = new Transfers();
-		transfer.setTransferID(ts.getInt("transfer_id"));
-		transfer.setTransferTypeID(ts.getInt("transfer_type_id"));
-		transfer.setTransferStatusID(ts.getInt("transfer_status_id"));
-		transfer.setAccountFrom(ts.getInt("account_from"));
-		transfer.setAccountTo(ts.getInt("account_to"));
+	private Transfer mapRowToTransfer(SqlRowSet ts) {
+		Transfer transfer = new Transfer();
+		transfer.setTransfer_id(ts.getInt("transfer_id"));
+		transfer.setTransfer_type_id(ts.getInt("transfer_type_id"));
+		transfer.setTransfer_status_id(ts.getInt("transfer_status_id"));
+		transfer.setAccount_from(ts.getInt("account_from"));
+		transfer.setAccount_to(ts.getInt("account_to"));
 		transfer.setAmount(ts.getBigDecimal("amount"));
 		return transfer;
+	}
+
+	@Override
+	public int getAccountIdFromUserId(int userId) {
+		int accountId = 0;
+		String sql = "SELECT account_id FROM accounts WHERE user_id = ?";
+
+		accountId = jdbcTemplate.queryForObject(sql, int.class, userId);
+
+		return accountId;
+		
 	}
 
 	//	DO WE NEED THIS ONE????????????????????

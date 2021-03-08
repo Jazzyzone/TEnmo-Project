@@ -6,7 +6,7 @@ import java.util.List;
 import com.techelevator.tenmo.exception.TransferIdNotFoundException;
 import com.techelevator.tenmo.exception.UserIdNotFoundException;
 import com.techelevator.tenmo.model.Accounts;
-import com.techelevator.tenmo.model.Transfers;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 
 public interface TenmoServicesDAO {
@@ -20,10 +20,12 @@ public interface TenmoServicesDAO {
 	
 	void UpdateFromUserBalance(int fromUser, BigDecimal amountTEBucks) throws UserIdNotFoundException;
 	
-	String transfer (int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException;
+	void transfer (int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException;
 
-	Transfers getTransferByID (long transferID) throws TransferIdNotFoundException;
+	Transfer getTransferByID (long transferID) throws TransferIdNotFoundException;
 	
-	List<Transfers> getAllTransfers();
+	List<Transfer> getAllTransfers();
+	
+	int getAccountIdFromUserId(int userId);
 	
 }

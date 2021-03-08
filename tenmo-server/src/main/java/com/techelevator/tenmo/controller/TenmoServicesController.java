@@ -20,10 +20,10 @@ import com.techelevator.tenmo.dao.UserDAO;
 import com.techelevator.tenmo.exception.TransferIdNotFoundException;
 import com.techelevator.tenmo.exception.UserIdNotFoundException;
 import com.techelevator.tenmo.model.Accounts;
-import com.techelevator.tenmo.model.Transfers;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 
-@PreAuthorize("isAuthenticated()")
+//@PreAuthorize("isAuthenticated()")
 @RestController
 public class TenmoServicesController {
 
@@ -50,8 +50,8 @@ public class TenmoServicesController {
 	@PreAuthorize("permitAll")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
-	public String createTransfer(@RequestBody Transfers newTransfer) throws UserIdNotFoundException {
-		return tsDAO.transfer(newTransfer.getAccountFrom(), newTransfer.getAccountTo(), newTransfer.getAmount());
+	public void createTransfer(@RequestBody Transfer newTransfer) throws UserIdNotFoundException {
+		tsDAO.transfer(newTransfer.getAccount_from(), newTransfer.getAccount_to(), newTransfer.getAmount());
 	}
 	
 	@PreAuthorize("permitAll")
@@ -71,14 +71,20 @@ public class TenmoServicesController {
 
 	@PreAuthorize("permitAll")
 	@RequestMapping(path = "/transfers", method = RequestMethod.GET)
-	public List<Transfers> getAllTranfers() {
+	public List<Transfer> getAllTranfers() {
 		return tsDAO.getAllTransfers();
 	}
 
 	@PreAuthorize("permitAll")
 	@RequestMapping(path = "/transfers/{transferId}", method = RequestMethod.GET)
-	public Transfers getTransfers(@PathVariable int transferId) throws TransferIdNotFoundException {
+	public Transfer getTransfers(@PathVariable int transferId) throws TransferIdNotFoundException {
 		return tsDAO.getTransferByID(transferId);
+	}
+	
+	@PreAuthorize("permitAll")
+	@RequestMapping(path = "/accounts/{userId}/accountid", method = RequestMethod.GET)
+	public int getAccountIdFromUserId(@PathVariable int userId) {
+		return tsDAO.getAccountIdFromUserId(userId);
 	}
 
 }

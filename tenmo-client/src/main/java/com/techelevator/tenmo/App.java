@@ -2,6 +2,8 @@ package com.techelevator.tenmo;
 
 import java.math.BigDecimal;
 
+import org.springframework.web.client.RestTemplate;
+
 import com.techelevator.tenmo.models.AuthenticatedUser;
 import com.techelevator.tenmo.models.User;
 import com.techelevator.tenmo.models.UserCredentials;
@@ -35,6 +37,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
     private ConsoleService console;
     private AuthenticationService authenticationService;
     private TenmoService currentTenmoService;
+    public RestTemplate restTemplate = new RestTemplate();
 
     public static void main(String[] args) {
     	App app = new App(new ConsoleService(System.in, System.out), new AuthenticationService(API_BASE_URL), 
@@ -101,6 +104,8 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		System.out.println("-------------------------------------------" );
 		int userInputId = 0;
 		userInputId = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel) " );
+		currentTenmoService.listTransfers();
+		
 		
 		System.out.println("-------------------------------------------" );
 		System.out.println("Transfer Details");
@@ -112,7 +117,7 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		
 	}
 
-	public String sendBucks() {
+	public void sendBucks() {
 		// TODO Auto-generated method stub
 		try {
 			System.out.println("-------------------------------------------" );
@@ -121,23 +126,29 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 			System.out.println("-------------------------------------------" );
 			currentTenmoService.listUsers();
 				
-			int userInputId = 0;
-			userInputId = console.getUserInputInteger("\nEnter ID of user you are sending to (0 to cancel) " );
-			App.TO_USER_ID = userInputId;
+			int toUserInputId = 0;
+			toUserInputId = console.getUserInputInteger("\nEnter ID of user you are sending to (0 to cancel) " );
+			App.TO_USER_ID = toUserInputId;
 			
 			BigDecimal userInputAmount = null;
 			userInputAmount = console.getUserInputBigDecimal("Enter amount " );
 			
-			currentTenmoService.makeATransfer(currentUser.getUser().getId(),  userInputId,  userInputAmount);
-			currentTenmoService.currentUserAccountUpdate(currentUser.getUser().getId(), userInputAmount);
-			currentTenmoService.toUserAccountUpdate(userInputId, userInputAmount);
+			if (currentTenmoService.makeATransfer(currentUser.getUser().getId(),  toUserInputId,  userInputAmount) == true) {
+				
+				currentTenmoService.currentUserAccountUpdate(currentUser.getUser().getId(), userInputAmount);
+				currentTenmoService.toUserAccountUpdate(toUserInputId, userInputAmount);
+				System.out.println("Congratulations, your transfer was successful");
 			
-			
+			} 
+			else 
+			{
+				System.out.println("You do not have enough funds for this transfer. Please try again!");
+			}
+					
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "**Your transfer has been completed.**";
 	}
 
 	private void requestBucks() {

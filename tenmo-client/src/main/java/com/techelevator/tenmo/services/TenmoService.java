@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.techelevator.tenmo.App;
 import com.techelevator.tenmo.models.Accounts;
-import com.techelevator.tenmo.models.Transfers;
+import com.techelevator.tenmo.models.Transfer;
 import com.techelevator.tenmo.models.User;
 import com.techelevator.view.ConsoleService;
 import com.techelevator.tenmo.models.AuthenticatedUser;
@@ -66,31 +66,51 @@ public class TenmoService {
 		}
 	}
 	
-	public String makeATransfer(int accountFromId, int accountToId, BigDecimal amountTEBucks) throws TenmoServiceException {
+	public boolean makeATransfer(int accountFromId, int accountToId, BigDecimal amountTEBucks) throws TenmoServiceException {
 		
-		Transfers transferObject = new Transfers(2, 2, accountFromId, accountToId, amountTEBucks);
+		
+		int fromUserAccountId = 0;
+		
+		int toUserAccountId = 0;
+		
+		
+		fromUserAccountId = restTemplate.exchange(BASE_URL + "/accounts/" + accountFromId + "/accountid", HttpMethod.GET, makeAuthEntity(), int.class).getBody();
+		toUserAccountId = restTemplate.exchange(BASE_URL + "/accounts/" + accountToId + "/accountid", HttpMethod.GET, makeAuthEntity(), int.class).getBody();
+		
+		
+		
+		Transfer transferObject = new Transfer();
 
+		transferObject.setTransfer_status_id(2);
+		transferObject.setTransfer_type_id(2);
+		transferObject.setAccount_from(fromUserAccountId);
+		transferObject.setAccount_to(toUserAccountId);
+		transferObject.setAmount(amountTEBucks);
+		
+		
 		BigDecimal currentUserBalance = viewCurrentBalance(App.USER_ID);
+//		double balance = currentUserBalance.doubleValue();
 		
 		BigDecimal currentUserUpdatedBalance = currentUserBalance.subtract(amountTEBucks);
 		
 		BigDecimal zeroBalance = new BigDecimal(0);
+//		double zero = zeroBalance.doubleValue();
 		
 		//checking for 0 or more dollar balance after transfer
-		if (currentUserUpdatedBalance.compareTo(zeroBalance) >= 0) {
+		if (currentUserUpdatedBalance.compareTo(zeroBalance) >= 0) { 
+		
 
 		    try {
-		      transferObject = restTemplate.postForObject(BASE_URL + "/transfers", makeTransferEntity(transferObject), 
-		    		  Transfers.class);
-		    } catch (RestClientResponseException ex) {
+		    	
+		    	restTemplate.exchange(BASE_URL + "/transfers", HttpMethod.POST, makeTransferEntity(transferObject), Transfer.class);
+		    	return true;
+		    } 
+		    catch (RestClientResponseException ex) {
 		    	
 		      throw new TenmoServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
 		    }
-
-		    return "Congratulations, your transfer was successful";
-		}
+		}	return false;
 		
-		return "Sorry, insufficient funds";
 	}
 	
 	
@@ -100,12 +120,16 @@ public class TenmoService {
 		
 		BigDecimal currentUserUpdatedBalance = currentUserBalance.subtract(amountTEBucks);
 		
-		Accounts accountObject = new Accounts(App.USER_ID, currentUserUpdatedBalance);
+//		Accounts accountObject = new Accounts(App.USER_ID, currentUserUpdatedBalance);
+		Accounts accountObject = new Accounts();
+		
+		accountObject.setUser_id(userId);
+		accountObject.setBalance(currentUserUpdatedBalance);
 		
 		 try {
 		      restTemplate.exchange(BASE_URL + "/accounts/" + App.USER_ID + "/decreased/balance", HttpMethod.PUT, 
-		    		  
-		    		  makeAccountEntity(accountObject), Accounts.class);
+		      makeAccountEntity(accountObject), Accounts.class);
+		      
 		    } catch (RestClientResponseException ex) {
 		    	
 		      throw new TenmoServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
@@ -119,18 +143,64 @@ public void toUserAccountUpdate(int userId, BigDecimal amountTEBucks) throws Ten
 		
 		BigDecimal currentUserUpdatedBalance = toUserBalance.add(amountTEBucks);
 		
-		Accounts accountObject = new Accounts(App.TO_USER_ID, currentUserUpdatedBalance);
+//		Accounts accountObject = new Accounts(App.TO_USER_ID, currentUserUpdatedBalance);
 		
+		Accounts accountObject = new Accounts();
+		accountObject.setUser_id(userId);
+		accountObject.setBalance(currentUserUpdatedBalance);
+				
 		 try {
 		      restTemplate.exchange(BASE_URL + "/accounts/" + App.TO_USER_ID + "/increased/balance", HttpMethod.PUT, 
-		    		  
-		    		  makeAccountEntity(accountObject), Accounts.class);
+		      makeAccountEntity(accountObject), Accounts.class);
+		      
 		    } catch (RestClientResponseException ex) {
 		    	
 		      throw new TenmoServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
 		    }
 		
 	}
+
+public void listTransfers() {
+	
+//	int fromUserAccountId =0;
+	
+	int toUserAccountId = 0;
+	
+	
+		Transfer[] transferArray = restTemplate.exchange(BASE_URL + "/transfers", HttpMethod.GET,
+				makeAuthEntity(), Transfer[].class).getBody();
+		
+		for (Transfer thisTransfer : transferArray) {
+			
+//			EXCHANGE FROM_ACCOUNT FOR FROM USERNAME
+			System.out.println(thisTransfer.getTransfer_id() + "\t" + thisTransfer.getAccount_from() + "\t" + thisTransfer.getAmount());
+			
+//			EXCHANGE TO_ACCOUNT FOR USERNAME
+			System.out.println(thisTransfer.getTransfer_id() + "\t" + thisTransfer.getAccount_to() + "\t" + thisTransfer.getAmount());
+			
+		}
+			
+//	accountFromId = thisTransfer.getAccount_from(); 
+//	toUserAccountId = thisTransfer.getAccount_to(); 
+//			
+//			
+//	= restTemplate.exchange(BASE_URL + "/accounts/" + accountFromId + "/accountid", HttpMethod.GET, makeAuthEntity(), int.class).getBody();
+//			
+//	= restTemplate.exchange(BASE_URL + "/accounts/" + accountToId + "/accountid", HttpMethod.GET, makeAuthEntity(), int.class).getBody();		
+//			
+//			
+//			Accounts senderAccount =thisTransfer.getAccountFrom()
+//			
+////			if((App.USER_ID = thisTransfer.getAccountFrom() || (App.USER_ID = thisTransfer.getAccountTo())) {	
+//				System.out.println(thisTransfer.getTransferID() + "\t" + "From" + ?????????????????????????????????);
+//			}
+//		
+//		}
+//	} catch (RestClientResponseException ex) {
+//		throw new TenmoServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+	
+	
+}
 
 	
 	
@@ -142,11 +212,11 @@ public void toUserAccountUpdate(int userId, BigDecimal amountTEBucks) throws Ten
 	
 	}
 	
-	private HttpEntity<Transfers> makeTransferEntity(Transfers transfer) {
+	private HttpEntity<Transfer> makeTransferEntity(Transfer transfer) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(App.AUTH_TOKEN);
-        HttpEntity<Transfers> entity = new HttpEntity<>(transfer, headers);
+        HttpEntity<Transfer> entity = new HttpEntity<>(transfer, headers);
         return entity;
     }
 	
