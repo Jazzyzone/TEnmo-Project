@@ -102,10 +102,14 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 		System.out.println("Transfers");
 		System.out.println("ID         \t From/To		Amount");
 		System.out.println("-------------------------------------------" );
-		int userInputId = 0;
-		userInputId = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel) " );
+		
 		currentTenmoService.listTransfers();
 		
+		
+		int userInputId = 0;
+		userInputId = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel) " );
+		
+//		GET TRANSFER DETAILS HERE!!!
 		
 		System.out.println("-------------------------------------------" );
 		System.out.println("Transfer Details");

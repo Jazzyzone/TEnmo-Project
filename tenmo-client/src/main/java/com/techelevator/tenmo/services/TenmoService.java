@@ -162,9 +162,9 @@ public void toUserAccountUpdate(int userId, BigDecimal amountTEBucks) throws Ten
 
 public void listTransfers() {
 	
-//	int fromUserAccountId =0;
+//	int fromUserAccountId = 0;
 	
-	int toUserAccountId = 0;
+//	int toUserAccountId = 0;
 	
 	
 		Transfer[] transferArray = restTemplate.exchange(BASE_URL + "/transfers", HttpMethod.GET,
