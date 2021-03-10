@@ -124,7 +124,7 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 	}
 
 
-	// Make a method for a username by ID
+	
 
 	@Override
 	public List<Transfer> getAllTransfers() {
@@ -182,6 +182,46 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		return transferObject;
 
 	}
+	
+	@Override
+	public int getAccountIdFromUserId(int userId) throws UserIdNotFoundException {
+		int accountId = 0;
+		String sql = "SELECT account_id FROM accounts WHERE user_id = ?";
+
+		accountId = jdbcTemplate.queryForObject(sql, int.class, userId);
+
+		return accountId;
+		
+	}
+	
+	// Make a method for a username by ID
+
+	@Override
+	public String getUsernameFromUserId(int userId) throws UserIdNotFoundException {
+		
+		String username = "";
+		
+		String sql = "SELECT username FROM users WHERE user_id = ?";
+		
+		username = jdbcTemplate.queryForObject(sql, String.class, userId);
+		
+		return username;
+	}
+	
+	@Override
+	public int getUserIdFromAccountId(int accountId) {
+		
+		//should we make an account not found exception?
+		
+		int userId = 0;
+		
+		String sql = "SELECT user_id FROM accounts WHERE account_id = ?";
+
+		userId = jdbcTemplate.queryForObject(sql, int.class, accountId);
+
+		return userId;
+	}
+
 
 	private User mapRowToUser(SqlRowSet rs) {
 		User user = new User();
@@ -204,16 +244,6 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		return transfer;
 	}
 
-	@Override
-	public int getAccountIdFromUserId(int userId) {
-		int accountId = 0;
-		String sql = "SELECT account_id FROM accounts WHERE user_id = ?";
-
-		accountId = jdbcTemplate.queryForObject(sql, int.class, userId);
-
-		return accountId;
-		
-	}
 
 	//	DO WE NEED THIS ONE????????????????????
 

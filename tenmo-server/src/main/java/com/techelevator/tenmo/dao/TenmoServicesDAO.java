@@ -26,6 +26,9 @@ public interface TenmoServicesDAO {
 	
 	List<Transfer> getAllTransfers();
 	
-	int getAccountIdFromUserId(int userId);
+	int getAccountIdFromUserId(int userId) throws UserIdNotFoundException;
 	
+	String getUsernameFromUserId(int userId) throws UserIdNotFoundException;
+	
+	int getUserIdFromAccountId(int accountId);
 }

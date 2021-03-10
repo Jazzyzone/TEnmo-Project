@@ -98,10 +98,10 @@ private static final String API_BASE_URL = "http://localhost:8080/";
 
 	private void viewTransferHistory() {
 		// TODO Auto-generated method stub
-		System.out.println("-------------------------------------------" );
+		System.out.println("-------------------------------------------------------" );
 		System.out.println("Transfers");
 		System.out.println("ID         \t From/To		Amount");
-		System.out.println("-------------------------------------------" );
+		System.out.println("-------------------------------------------------------" );
 		
 		currentTenmoService.listTransfers();
 		

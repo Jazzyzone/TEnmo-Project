@@ -23,7 +23,7 @@ import com.techelevator.tenmo.model.Accounts;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 
-//@PreAuthorize("isAuthenticated()")
+@PreAuthorize("isAuthenticated()")
 @RestController
 public class TenmoServicesController {
 
@@ -35,32 +35,32 @@ public class TenmoServicesController {
 		this.userDAO = userDAO;
 	}
 
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@RequestMapping(path = "/accounts/{userId}/balance", method = RequestMethod.GET)
 	public BigDecimal getBalance(@PathVariable int userId) {
 		return tsDAO.getUserCurrentBalanceByID(userId);
 	}
 
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@RequestMapping(path = "/users", method = RequestMethod.GET)
 	public List<User> getAll() {
 		return tsDAO.getAllUsers();
 	}
 	
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(path = "/transfers", method = RequestMethod.POST)
 	public void createTransfer(@RequestBody Transfer newTransfer) throws UserIdNotFoundException {
 		tsDAO.transfer(newTransfer.getAccount_from(), newTransfer.getAccount_to(), newTransfer.getAmount());
 	}
 	
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@RequestMapping(path = "/accounts/{userId}/decreased/balance", method = RequestMethod.PUT)
 	public void fromUserUpdate(@RequestBody Accounts newAccountUpdate, @PathVariable int userId) throws UserIdNotFoundException {
 		tsDAO.UpdateFromUserBalance(userId, newAccountUpdate.getBalance());
 	}
 
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@RequestMapping(path = "/accounts/{userId}/increased/balance", method = RequestMethod.PUT)
 	public void toUserUpdate(@RequestBody Accounts newAccountUpdate, @PathVariable int userId) 
 			throws UserIdNotFoundException {
@@ -69,22 +69,34 @@ public class TenmoServicesController {
 	}
 	
 
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@RequestMapping(path = "/transfers", method = RequestMethod.GET)
 	public List<Transfer> getAllTranfers() {
 		return tsDAO.getAllTransfers();
 	}
 
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@RequestMapping(path = "/transfers/{transferId}", method = RequestMethod.GET)
 	public Transfer getTransfers(@PathVariable int transferId) throws TransferIdNotFoundException {
 		return tsDAO.getTransferByID(transferId);
 	}
 	
-	@PreAuthorize("permitAll")
+	//@PreAuthorize("permitAll")
 	@RequestMapping(path = "/accounts/{userId}/accountid", method = RequestMethod.GET)
-	public int getAccountIdFromUserId(@PathVariable int userId) {
+	public int getAccountIdFromUserId(@PathVariable int userId) throws UserIdNotFoundException {
 		return tsDAO.getAccountIdFromUserId(userId);
+	}
+	
+	//@PreAuthorize("permitAll")
+	@RequestMapping(path = "/users/{userId}/username", method = RequestMethod.GET)
+	public String getUsernameFromUserId(@PathVariable int userId) throws UserIdNotFoundException {
+		return tsDAO.getUsernameFromUserId(userId);
+	}
+	
+	//@PreAuthorize("permitAll")
+	@RequestMapping(path = "/accounts/{accountId}/userId", method = RequestMethod.GET)
+	public int getUserIdFromAccountId(@PathVariable int accountId) {
+		return tsDAO.getUserIdFromAccountId(accountId);
 	}
 
 }
