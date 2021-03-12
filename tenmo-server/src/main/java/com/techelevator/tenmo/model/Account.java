@@ -4,17 +4,14 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.NotBlank;
 
-public class Accounts {
-	
-	private int account_id;
-	
-	@NotBlank(message = "This field can must have a value.")
-	private int user_id;	
+public class Account {
 
-//	DO WE NEED THIS ONE???????????????????
-//	@NotBlank(message = "This field can must have a value.")
+	//	PRIVATE MEMBERS/ INSTANCE VARIABLES
+	private int account_id;
+	private int user_id;
 	private BigDecimal balance;
 
+	//	GETTERS AND SETTERS
 	public int getAccount_id() {
 		return account_id;
 	}
@@ -39,21 +36,10 @@ public class Accounts {
 		this.balance = balance;
 	}
 
+	//	TO STRING METHOD
 	@Override
 	public String toString() {
 		return "Accounts [account_id=" + account_id + ", user_id=" + user_id + ", balance=" + balance + "]";
 	}
-	
-	
-	
-	
-//	public Accounts(int accountId, int userId, BigDecimal balance) {
-//		this.accountId = accountId;
-//		this.userId = userId;
-//		this.balance = balance;
-//	}
-
-
-
 
 }
