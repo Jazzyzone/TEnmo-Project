@@ -187,6 +187,39 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		return TransfStatusDesc;
 
 	}
+	
+	
+	@Override
+	public void requestTransfer(int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException {
+		
+		try {
+			String sql = "INSERT INTO transfers(transfer_type_id, transfer_status_id, account_from, account_to, amount) \r\n"
+					+ "VALUES(1, 1, ?, ?, ?)";
+			jdbcTemplate.update(sql, fromUser, toUser, amountTEBucks);
+
+		} catch (DataAccessException e) {
+			
+		}
+		
+	}
+
+	@Override
+	public void approvedTransfer(int transferID) {
+		
+		String sqlFromUser = "UPDATE transfers SET transfer_status_id = 2 WHERE transfer_id = ?";
+		jdbcTemplate.update(sqlFromUser, transferID);
+
+		
+	}
+
+	@Override
+	public void rejectedTransfer(int transferID) {
+		
+		String sqlFromUser = "UPDATE transfers SET transfer_status_id = 3 WHERE transfer_id = ?";
+		jdbcTemplate.update(sqlFromUser, transferID);
+		
+	}
+	
 
 	// MAP ROW TO - METHODS
 	private User mapRowToUser(SqlRowSet rs) {
@@ -210,4 +243,5 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		transfer.setAmount(ts.getBigDecimal("amount"));
 		return transfer;
 	}
+
 }

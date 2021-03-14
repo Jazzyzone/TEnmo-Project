@@ -109,16 +109,16 @@ public class App {
 		currentTenmoService.listTransfers();
 
 		System.out.println("---------");
-		int InputTransferId = 0;
+		int inputTransferId = 0;
 
 		try {
-			InputTransferId = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel) ");
+			inputTransferId = console.getUserInputInteger("Please enter transfer ID to view details (0 to cancel) ");
 
 			System.out.println("-------------------------------------------");
 			System.out.println("Transfer Details");
 			System.out.println("-------------------------------------------");
 
-			currentTenmoService.TransferDetailsByUserId(InputTransferId);
+			currentTenmoService.TransferDetailsByUserId(inputTransferId);
 		} catch (TenmoServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,8 +126,36 @@ public class App {
 	}
 
 	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
-
+		System.out.println("-------------------------------------------");
+		System.out.println("Pending Transfers");
+		System.out.println("ID         \t To		Amount");
+		System.out.println("-------------------------------------------");
+		//List Pending Transfers
+		
+		System.out.println("---------");
+		int inputTransferId = 0;
+		inputTransferId = console.getUserInputInteger("Please enter transfer ID to approve/reject (0 to cancel) ");
+		
+		
+		System.out.println("1: Approve");
+		System.out.println("2: Reject");
+		System.out.println("0: Don't approve or reject");
+		System.out.println("---------");
+		int inputOption = 0;
+		inputOption = console.getUserInputInteger("Please choose an option ");
+		
+		//if option = 1
+		try {
+			currentTenmoService.approveTransfer(inputTransferId);
+			currentTenmoService.currentUserAccountUpdate(currentUser.getUser().getId(), amountTEBucks);
+			currentTenmoService.toUserAccountUpdate(//userID update and amount update
+					);
+		} catch (TenmoServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//if option = 2
+		currentTenmoService.rejectTransfer(inputTransferId);
 	}
 
 	public void sendBucks() {
@@ -166,8 +194,33 @@ public class App {
 	}
 
 	private void requestBucks() {
-		// TODO Auto-generated method stub
+		
+		try {
+			
+		System.out.println("-------------------------------------------");
+		System.out.println("Users");
+		System.out.println("ID         \t Name");
+		System.out.println("-------------------------------------------");
+		currentTenmoService.listUsers();
+		
+		System.out.println("---------");
 
+		int toUserInputId = 0;
+		toUserInputId = console.getUserInputInteger("\nEnter ID of user you are requesting from (0 to cancel) ");
+		App.TO_USER_ID = toUserInputId;
+		
+		BigDecimal userInputAmount = null;
+		userInputAmount = console.getUserInputBigDecimal("Enter amount ");
+		
+		currentTenmoService.requestATransfer(currentUser.getUser().getId(), toUserInputId, userInputAmount); 
+			
+		System.out.println("Congratulations, your transfer request was successful");
+
+		
+		} catch (TenmoServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void exitProgram() {

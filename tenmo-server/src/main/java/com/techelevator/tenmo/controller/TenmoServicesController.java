@@ -23,7 +23,7 @@ import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 
-@PreAuthorize("isAuthenticated()")
+//@PreAuthorize("isAuthenticated()")
 @RestController
 public class TenmoServicesController {
 
@@ -101,6 +101,26 @@ public class TenmoServicesController {
 	@RequestMapping(path = "/transfer_statuses/{transferStatusId}/transfer_status_desc", method = RequestMethod.GET)
 	public String TransferStatusDescFromTransfStatusId(@PathVariable int transferStatusId) {
 		return tsDAO.getTransferStatusDescFromTransferStatusId(transferStatusId);
+	}
+	
+	@ResponseStatus(HttpStatus.CREATED)
+	@RequestMapping(path = "/transfers/request", method = RequestMethod.POST)
+	public void requestTransfer(@RequestBody Transfer newTransfer) throws UserIdNotFoundException {
+		tsDAO.requestTransfer(newTransfer.getAccount_from(), newTransfer.getAccount_to(), newTransfer.getAmount());
+	}
+	
+	@RequestMapping(path = "/transfers/{transferID}/approval", method = RequestMethod.PUT)
+	public void approvedTransfer(@RequestBody Transfer transferUpdate, @PathVariable int transferID)
+			throws UserIdNotFoundException {
+
+		tsDAO.approvedTransfer(transferID);
+	}
+	
+	@RequestMapping(path = "/transfers/{transferID}/rejected", method = RequestMethod.PUT)
+	public void rejectedTransfer(@RequestBody Transfer transferUpdate, @PathVariable int transferID)
+			throws UserIdNotFoundException {
+
+		tsDAO.rejectedTransfer(transferID);
 	}
 
 }

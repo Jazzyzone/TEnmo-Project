@@ -36,4 +36,10 @@ public interface TenmoServicesDAO {
 	String getTransferTypeDescFromTransferTypeId(int transferTypeId);
 
 	String getTransferStatusDescFromTransferStatusId(int transferStatusId);
+	
+	void requestTransfer(int fromUser, int toUser, BigDecimal amountTEBucks) throws UserIdNotFoundException;
+	
+	void approvedTransfer(int transferID);
+	
+	void rejectedTransfer(int transferID);
 }
