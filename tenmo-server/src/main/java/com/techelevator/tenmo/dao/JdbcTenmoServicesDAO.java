@@ -244,4 +244,18 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		return transfer;
 	}
 
+	@Override
+	public List<Transfer> getAllPendingTransfers() {
+		List<Transfer> allPendingTransfers = new ArrayList<>();
+
+		String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, account_from, account_to, amount FROM transfers WHERE transfer_status_id = 1";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+
+		while (results.next()) {
+			Transfer transferObject = mapRowToTransfer(results);
+			allPendingTransfers.add(transferObject);
+
+		}
+		return allPendingTransfers;
+	}
 }

@@ -122,5 +122,10 @@ public class TenmoServicesController {
 
 		tsDAO.rejectedTransfer(transferID);
 	}
+	
+	@RequestMapping(path = "/transfers/transfer_status_id_1", method = RequestMethod.GET)
+	public List<Transfer> getAllPendingTransfers() {
+		return tsDAO.getAllPendingTransfers();
+	}
 
 }

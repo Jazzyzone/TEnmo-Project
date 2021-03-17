@@ -42,4 +42,6 @@ public interface TenmoServicesDAO {
 	void approvedTransfer(int transferID);
 	
 	void rejectedTransfer(int transferID);
+	
+	List<Transfer> getAllPendingTransfers();
 }
