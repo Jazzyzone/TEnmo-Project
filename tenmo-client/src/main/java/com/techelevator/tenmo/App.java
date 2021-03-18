@@ -118,7 +118,7 @@ public class App {
 			System.out.println("Transfer Details");
 			System.out.println("-------------------------------------------");
 
-			currentTenmoService.TransferDetailsByUserId(inputTransferId);
+			currentTenmoService.TransferDetailsByTransferId(inputTransferId);
 		} catch (TenmoServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -147,8 +147,8 @@ public class App {
 
 			try {
 				currentTenmoService.approveTransfer(inputTransferId);
-				//			currentTenmoService.currentUserAccountUpdate(currentUser.getUser().getId(), currentTenmoService.TransferDetailsByUserId(inputTransferId));
-				//			currentTenmoService.toUserAccountUpdate(//userID update and amount update);
+				currentTenmoService.currentUserAccountUpdate(currentUser.getUser().getId(), currentTenmoService.getAmountByTransferId(inputTransferId));
+				//currentTenmoService.toUserAccountUpdate(toUser , currentTenmoService.getAmountByTransferId(inputTransferId));
 
 //				****************************************
 //				WE ARE SUCCESFULLY CHANGING A PENDING TRANSFER TO APPROVED

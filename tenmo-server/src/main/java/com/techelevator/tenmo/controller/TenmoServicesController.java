@@ -128,4 +128,8 @@ public class TenmoServicesController {
 		return tsDAO.getAllPendingTransfers();
 	}
 
+	@RequestMapping(path = "/transfers/{transferId}/amount", method = RequestMethod.GET)
+	public BigDecimal getAmountByTransferID(@PathVariable int transferId) {
+		return tsDAO.getTransferAmountByTransferID(transferId);
+	}
 }

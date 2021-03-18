@@ -239,7 +239,7 @@ public class TenmoService {
 
 	}
 
-	public void TransferDetailsByUserId(int transferId) throws TenmoServiceException {
+	public void TransferDetailsByTransferId(int transferId) throws TenmoServiceException {
 
 		Transfer selectedTransfer = new Transfer();
 		int fromUserId = 0;
@@ -327,7 +327,7 @@ public class TenmoService {
 	public void approveTransfer(int transferID) throws TenmoServiceException {
 
 		Transfer selectedTransfer = new Transfer();
-		
+		//GET TRANSFER BY ID TO UPDATE TRANSFER 
 		selectedTransfer = restTemplate
 				.exchange(BASE_URL + "/transfers/" + transferID, HttpMethod.GET, makeAuthEntity(), Transfer.class)
 				.getBody();
@@ -424,6 +424,21 @@ public class TenmoService {
 			}
 		}
 	}	
+	
+	public BigDecimal getAmountByTransferId(int transferId) throws TenmoServiceException {
+
+		BigDecimal transferAmount = null;
+		// EXCHANGE CURRENT USERS ID FOR CURRENT USERS BALANCE
+		try {
+			transferAmount = restTemplate.exchange(BASE_URL + "/transfers/" + transferId + "/amount", HttpMethod.GET,
+					makeAuthEntity(), BigDecimal.class).getBody();
+
+		} catch (RestClientResponseException ex) {
+			throw new TenmoServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		}
+		return transferAmount;
+
+	}
 
 	// AUTHORIZATION ENTITIES
 	private HttpEntity makeAuthEntity() {
