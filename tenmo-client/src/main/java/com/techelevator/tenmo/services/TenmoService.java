@@ -439,6 +439,39 @@ public class TenmoService {
 		return transferAmount;
 
 	}
+	
+	public int getRecUserIdByTranferId(int transferId) {
+		
+		int userId = 0;
+		// EXCHANGE TRANSFER ID FOR RECIEVING USER'S ID NUMBER
+			userId = restTemplate.exchange(BASE_URL + "/transfers/" + transferId + "/accounts", HttpMethod.GET,
+					makeAuthEntity(), int.class).getBody();
+		return userId;
+	}
+	
+	public void recievingUserAccountUpdate(int userId, BigDecimal amountTEBucks) throws TenmoServiceException {
+
+		// GET RECEIVING PARTY USER BALANCE
+		BigDecimal toUserBalance = viewCurrentBalance(userId);
+		// ADD THE FUNDS TRANSFERED TO THE RECEIVERS BALANCE
+		BigDecimal currentUserUpdatedBalance = toUserBalance.add(amountTEBucks);
+
+		// CREATE AN ACCOUNT OBJECT TO SEND AN ACCOUNT UPDATE
+		Account accountObject = new Account();
+		accountObject.setUser_id(userId);
+		accountObject.setBalance(currentUserUpdatedBalance);
+
+		try {
+			// SEND ACCOUNT UPDATE
+			restTemplate.exchange(BASE_URL + "/accounts/" + userId + "/increased/balance", HttpMethod.PUT,
+					makeAccountEntity(accountObject), Account.class);
+
+		} catch (RestClientResponseException ex) {
+
+			throw new TenmoServiceException(ex.getRawStatusCode() + " : " + ex.getResponseBodyAsString());
+		}
+
+	}
 
 	// AUTHORIZATION ENTITIES
 	private HttpEntity makeAuthEntity() {

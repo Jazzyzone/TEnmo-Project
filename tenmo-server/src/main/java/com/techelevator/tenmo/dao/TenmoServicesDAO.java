@@ -46,4 +46,6 @@ public interface TenmoServicesDAO {
 	List<Transfer> getAllPendingTransfers();
 	
 	BigDecimal getTransferAmountByTransferID(int transferID);
+	
+	int getUserIdFromTransferId(int transferID);
 }

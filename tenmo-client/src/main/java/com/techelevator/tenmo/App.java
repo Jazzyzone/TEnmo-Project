@@ -148,8 +148,9 @@ public class App {
 			try {
 				currentTenmoService.approveTransfer(inputTransferId);
 				currentTenmoService.currentUserAccountUpdate(currentUser.getUser().getId(), currentTenmoService.getAmountByTransferId(inputTransferId));
-				//currentTenmoService.toUserAccountUpdate(toUser , currentTenmoService.getAmountByTransferId(inputTransferId));
-
+				int recievingUserId = currentTenmoService.getRecUserIdByTranferId(inputTransferId);
+				currentTenmoService.recievingUserAccountUpdate(recievingUserId , currentTenmoService.getAmountByTransferId(inputTransferId));
+				System.out.println("Congratulations, you have approved the transfer of $" + currentTenmoService.getAmountByTransferId(inputTransferId));
 //				****************************************
 //				WE ARE SUCCESFULLY CHANGING A PENDING TRANSFER TO APPROVED
 //				WE NEED TO UPDATE BALNCES DUE TO APPROVED TRANSFER
@@ -166,6 +167,7 @@ public class App {
 		if (inputOption == 2) {
 			try {
 				currentTenmoService.rejectTransfer(inputTransferId);
+				System.out.println("You have rejected this transfer request.");
 			} catch (TenmoServiceException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

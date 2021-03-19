@@ -132,4 +132,9 @@ public class TenmoServicesController {
 	public BigDecimal getAmountByTransferID(@PathVariable int transferId) {
 		return tsDAO.getTransferAmountByTransferID(transferId);
 	}
+	
+	@RequestMapping(path = "/transfers/{transferID}/accounts", method = RequestMethod.GET)
+	public int getUserFromTransferID(@PathVariable int transferID) throws UserIdNotFoundException {
+		return tsDAO.getUserIdFromTransferId(transferID);
+	}
 }

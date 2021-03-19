@@ -245,6 +245,19 @@ public class JdbcTenmoServicesDAO implements TenmoServicesDAO {
 		return result;
 	}
 	
+	@Override
+	public int getUserIdFromTransferId(int transferID) {
+		int userId = 0;
+
+		String sql = "SELECT user_id from accounts INNER JOIN transfers ON"
+				+ " accounts.account_id = transfers.account_from WHERE transfer_id = ?";
+		
+		userId = jdbcTemplate.queryForObject(sql, int.class, transferID);
+
+		return userId;
+	}
+
+	
 
 	// MAP ROW TO - METHODS
 	private User mapRowToUser(SqlRowSet rs) {
